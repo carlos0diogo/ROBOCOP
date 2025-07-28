@@ -30,12 +30,10 @@ sudo apt install -y \
     ros-humble-robot-state-publisher \
     ros-humble-cartographer \
     ros-humble-cartographer-ros \
-    ros-humble-gazebo-plugins \
     ros-humble-teleop-twist-keyboard \
     ros-humble-teleop-twist-joy \
     ros-humble-xacro \
     ros-humble-nav2-bringup \
-    ros-humble-nav2-navigation \
     ros-humble-nav2-map-server \
     ros-humble-nav2-lifecycle-manager \
     ros-humble-urdf \

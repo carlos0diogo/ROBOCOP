@@ -199,11 +199,14 @@ cd ~/
 git clone https://github.com/carlos0diogo/ROBOCOP.git tortoisebot_ws
 cd tortoisebot_ws
 
+# Configurar ROS2 (se compilado do código fonte)
+source setup_ros2.sh
+
 # Instalar dependências
 ./install_dependencies.sh
 
 # Compilar
-colcon build
+colcon build --symlink-install
 
 # Configurar ambiente
 source install/setup.bash
