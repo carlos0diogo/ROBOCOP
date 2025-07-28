@@ -196,7 +196,7 @@ tortoisebot_ws/
 ```bash
 # Clonar e configurar
 cd ~/
-git clone <repo-url> tortoisebot_ws
+git clone https://github.com/carlos0diogo/ROBOCOP.git tortoisebot_ws
 cd tortoisebot_ws
 
 # Instalar dependências

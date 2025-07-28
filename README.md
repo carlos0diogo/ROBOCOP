@@ -97,7 +97,7 @@ ros2 launch tortoisebot_bringup bringup.launch.py
 1. Clone este repositório:
 ```bash
 cd ~/ros2_ws/src
-git clone [seu-repo] tortoisebot_personalizado
+git clone https://github.com/carlos0diogo/ROBOCOP.git tortoisebot_personalizado
 ```
 
 2. Instale dependências:
