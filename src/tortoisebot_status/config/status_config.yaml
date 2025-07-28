@@ -1,0 +1,229 @@
+# Configuração do Sistema de Status do TortoiseBot
+# Arquivo: status_config.yaml
+
+# =============================================================================
+# CONFIGURAÇÕES DE MONITORAMENTO DE BATERIA
+# =============================================================================
+
+# Taxa de atualização do monitor de bateria
+battery_monitor:
+  update_rate: 1.0  # Hz
+  
+  # Configurações de tensão
+  voltage_divider_ratio: 3.0  # Divisor de tensão para leitura ADC
+  battery_cells: 4  # Número de células da bateria (4x AA)
+  cell_voltage_max: 1.6  # Tensão máxima por célula (V)
+  cell_voltage_min: 1.0  # Tensão mínima por célula (V)
+  
+  # Limites de alerta
+  low_battery_threshold: 20.0    # % para alerta de bateria baixa
+  critical_battery_threshold: 10.0  # % para alerta crítico
+  
+  # Opções de monitoramento
+  enable_gpio_monitoring: true   # Usar GPIO para leitura de tensão
+  enable_system_monitoring: true  # Usar informações do sistema
+  
+  # Configurações de filtragem
+  voltage_filter_alpha: 0.1  # Fator de filtragem (0.0-1.0)
+  
+# =============================================================================
+# CONFIGURAÇÕES DE MONITORAMENTO DO SISTEMA
+# =============================================================================
+
+system_monitor:
+  update_rate: 0.5  # Hz
+  
+  # Limites de temperatura da CPU
+  cpu_temp_warning: 70.0   # °C - Aviso
+  cpu_temp_critical: 80.0  # °C - Crítico
+  
+  # Limites de uso de memória
+  memory_warning: 80.0   # % - Aviso
+  memory_critical: 90.0  # % - Crítico
+  
+  # Limites de uso de disco
+  disk_warning: 80.0   # % - Aviso
+  disk_critical: 90.0  # % - Crítico
+  
+  # Limites de CPU
+  cpu_usage_warning: 80.0   # % - Aviso
+  cpu_usage_critical: 95.0  # % - Crítico
+  
+  # Configurações de log
+  enable_detailed_logging: false  # Log detalhado a cada minuto
+  
+# =============================================================================
+# CONFIGURAÇÕES DE DIAGNÓSTICOS
+# =============================================================================
+
+diagnostics:
+  # Agregação de diagnósticos
+  enable_aggregation: true
+  
+  # Configurações do agregador
+  aggregator:
+    update_rate: 1.0  # Hz
+    
+    # Analisadores por categoria
+    analyzers:
+      - name: "tortoisebot_hardware"
+        type: "diagnostic_aggregator/GenericAnalyzer"
+        path: "Hardware"
+        find_and_remove_prefix: "tortoisebot"
+        regex: "tortoisebot/(battery|temperature|system)"
+        
+      - name: "tortoisebot_sensors"
+        type: "diagnostic_aggregator/GenericAnalyzer"
+        path: "Sensors"
+        find_and_remove_prefix: "tortoisebot"
+        regex: "tortoisebot/(lidar|ultrasonic|camera)"
+        
+      - name: "tortoisebot_motors"
+        type: "diagnostic_aggregator/GenericAnalyzer"
+        path: "Motors"
+        find_and_remove_prefix: "tortoisebot"
+        regex: "tortoisebot/(left_motor|right_motor|differential_drive)"
+
+# =============================================================================
+# CONFIGURAÇÕES ESPECÍFICAS DO RASPBERRY PI
+# =============================================================================
+
+raspberry_pi:
+  # Métodos de leitura de temperatura
+  temp_methods:
+    - "/sys/class/thermal/thermal_zone0/temp"  # Arquivo de sistema
+    - "vcgencmd measure_temp"  # Comando específico do RPi
+    - "psutil"  # Biblioteca Python
+  
+  # Configurações de GPIO para ADC
+  gpio_config:
+    enable: true
+    adc_type: "MCP3008"  # Tipo de ADC para leitura de tensão
+    spi_channel: 0
+    spi_device: 0
+    battery_channel: 0  # Canal do ADC para tensão da bateria
+    
+  # Configurações de energia
+  power_management:
+    enable_undervoltage_detection: true
+    undervoltage_threshold: 4.5  # V - Limite de subtensão
+    
+# =============================================================================
+# CONFIGURAÇÕES DE ALERTAS E NOTIFICAÇÕES
+# =============================================================================
+
+alerts:
+  # Configurações gerais
+  enable_audio_alerts: false  # Alertas sonoros (se buzzer disponível)
+  enable_led_indicators: false  # LEDs de status (se disponíveis)
+  
+  # Configurações de log
+  log_alerts_to_file: true
+  alert_log_file: "/tmp/tortoisebot_alerts.log"
+  
+  # Timeouts e repetições
+  alert_repeat_interval: 300  # segundos - Repetir alerta crítico
+  alert_timeout: 30  # segundos - Timeout para resolução automática
+  
+  # Configurações por tipo de alerta
+  battery_alerts:
+    low_battery:
+      enabled: true
+      message: "Bateria baixa - considere trocar/recarregar"
+      priority: "warning"
+    critical_battery:
+      enabled: true
+      message: "Bateria crítica - desligue o robô imediatamente"
+      priority: "critical"
+      
+  temperature_alerts:
+    high_temp:
+      enabled: true
+      message: "Temperatura da CPU elevada"
+      priority: "warning"
+    critical_temp:
+      enabled: true
+      message: "Temperatura da CPU crítica - risco de thermal throttling"
+      priority: "critical"
+      
+  memory_alerts:
+    high_memory:
+      enabled: true
+      message: "Uso de memória elevado"
+      priority: "warning"
+    critical_memory:
+      enabled: true
+      message: "Memória quase esgotada - risco de travamento"
+      priority: "critical"
+
+# =============================================================================
+# CONFIGURAÇÕES DE REDE E COMUNICAÇÃO
+# =============================================================================
+
+network:
+  # Monitoramento de conectividade
+  enable_connectivity_check: true
+  connectivity_check_interval: 60  # segundos
+  connectivity_hosts:
+    - "8.8.8.8"  # Google DNS
+    - "1.1.1.1"  # Cloudflare DNS
+  
+  # Status de rede
+  publish_network_status: true
+  network_interface: "wlan0"  # Interface principal a monitorar
+
+# =============================================================================
+# CONFIGURAÇÕES DE DESENVOLVIMENTO E DEBUG
+# =============================================================================
+
+debug:
+  # Simulação (para teste sem hardware real)
+  enable_simulation_mode: false
+  simulation_battery_discharge_rate: 1.0  # %/min
+  simulation_temperature_variation: 5.0  # ±°C
+  
+  # Logs de debug
+  enable_debug_logging: false
+  debug_log_components:
+    - "battery_monitor"
+    - "system_monitor"
+    - "diagnostics"
+  
+  # Métricas de desempenho
+  enable_performance_monitoring: false
+  performance_log_interval: 300  # segundos
+
+# =============================================================================
+# CONFIGURAÇÕES DE INTEGRAÇÃO ROS2
+# =============================================================================
+
+ros2:
+  # QoS profiles
+  qos_profiles:
+    sensor_data:
+      reliability: "reliable"
+      durability: "volatile"
+      history: "keep_last"
+      depth: 10
+      
+    diagnostics:
+      reliability: "reliable"
+      durability: "transient_local"
+      history: "keep_last"
+      depth: 50
+      
+    alerts:
+      reliability: "reliable"
+      durability: "transient_local"
+      history: "keep_all"
+  
+  # Namespaces e tópicos
+  namespaces:
+    base: "tortoisebot"
+    status: "status"
+    diagnostics: "diagnostics"
+  
+  # Frame IDs
+  frame_ids:
+    base_link: "base_link"
+    battery: "battery_link"

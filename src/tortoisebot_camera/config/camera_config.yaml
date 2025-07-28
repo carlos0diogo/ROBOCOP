@@ -1,0 +1,94 @@
+# Configuração da Webcam Lenovo 300 para TortoiseBot
+# Arquivo: camera_config.yaml
+
+# Parâmetros básicos da câmera
+camera_index: 0  # Índice da câmera USB (0 = primeira câmera)
+frame_id: "camera_link"  # Frame ID para transformações
+
+# Resolução e qualidade
+image_width: 640  # Largura da imagem em pixels
+image_height: 480  # Altura da imagem em pixels
+fps: 30  # Taxa de quadros por segundo
+
+# Configurações de exposição e imagem
+auto_exposure: true  # Exposição automática
+brightness: 50  # Brilho (0-100)
+contrast: 50  # Contraste (0-100)
+saturation: 50  # Saturação (0-100)
+hue: 0  # Matiz (-180 a 180)
+
+# Arquivo de calibração (deixe vazio se não tiver)
+camera_info_file: ""  # Caminho para arquivo .yaml de calibração
+
+# Configurações avançadas
+# buffer_size: 1  # Tamanho do buffer de captura
+# use_threading: true  # Usar thread separada para captura
+
+# Configurações de compressão (para transmissão)
+enable_compression: false  # Ativar compressão de imagem
+compression_quality: 80  # Qualidade da compressão JPEG (1-100)
+
+# Configurações de processamento
+enable_undistortion: false  # Correção de distorção (requer calibração)
+enable_rectification: false  # Retificação de imagem
+
+# Configurações de debug
+publish_debug_image: false  # Publicar imagem com informações de debug
+show_camera_info: true  # Mostrar informações da câmera no log
+
+# Configurações de rede (para transmissão remota)
+enable_image_transport: true  # Usar image_transport para compressão
+transport_hint: "raw"  # raw, compressed, theora
+
+# Limites de desempenho
+max_fps: 60  # FPS máximo permitido
+min_fps: 5   # FPS mínimo aceitável
+
+# Configurações de fallback
+fallback_camera_index: 1  # Câmera alternativa se a principal falhar
+retry_attempts: 3  # Tentativas de reconexão
+retry_delay: 2.0  # Delay entre tentativas (segundos)
+
+# Configurações específicas da Lenovo 300
+# Baseado nas especificações do hardware:
+# - Resolução máxima: 1920x1080 (Full HD)
+# - Resoluções suportadas: 1920x1080, 1280x720, 640x480, 320x240
+# - Taxa de quadros: até 30 FPS em Full HD, até 60 FPS em 720p
+# - Interface: USB 2.0
+# - Foco: Manual
+# - Campo de visão: aproximadamente 65 graus
+
+# Configurações recomendadas para diferentes usos:
+
+# Para navegação autônoma (baixa latência, processamento rápido):
+navigation_config:
+  image_width: 320
+  image_height: 240
+  fps: 60
+  auto_exposure: true
+  brightness: 60
+
+# Para mapeamento SLAM (qualidade moderada):
+slam_config:
+  image_width: 640
+  image_height: 480
+  fps: 30
+  auto_exposure: true
+  brightness: 50
+
+# Para transmissão remota (qualidade alta):
+streaming_config:
+  image_width: 1280
+  image_height: 720
+  fps: 30
+  enable_compression: true
+  compression_quality: 85
+
+# Para detecção de objetos (qualidade alta, estável):
+detection_config:
+  image_width: 640
+  image_height: 480
+  fps: 15
+  auto_exposure: false
+  brightness: 55
+  contrast: 60
